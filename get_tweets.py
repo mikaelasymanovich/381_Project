@@ -20,14 +20,14 @@ data = json.loads(pr.content)
 get_authorization = "Bearer " + data.get("access_token");
 
 
-payload = {'q': '#GoPackGo', 'count': 100}
+payload = {'q': '#GoPackGo', 'result_type': 'popular', 'count': 100}
 get_headers = {'authorization': get_authorization}
 #r = requests.get('https://api.twitter.com/1.1/search/tweets.json', params=payload)
 # ?q=%23freebandnames&since_id=24012619984051000&max_id=250126199840518145&result_type=mixed&count=4')
 r = requests.get('https://api.twitter.com/1.1/search/tweets.json?', headers=get_headers, params=payload) #.json?q=%40gudrunvaldis
 parsed = json.loads(r.content)
 #print(json.dumps(parsed, indent=4))
-#print(json.dumps(parsed["statuses"], indent=4))
+print(json.dumps(parsed["statuses"], indent=4))
 user_tweet = {}
 users = []
 G = nx.Graph()
