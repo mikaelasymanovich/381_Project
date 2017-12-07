@@ -43,6 +43,7 @@ def make_graph(auth, tweets, G):
 		headers = {'authorization': auth}
 		r = requests.get('https://api.twitter.com/1.1/statuses/retweeters/ids.json', headers=headers, params=payload1)
 		retweeters = json.loads(r.content)
+		print retweeters
 		for retweeter in retweeters["ids"]:
 			G.add_node(retweeter)
 			G.add_edge(retweeter, user_id, weight=1) #change this weight accordingly
@@ -55,7 +56,7 @@ def showGraph(graph):
 def main():
 	G = nx.DiGraph()
 	authorization = auth()
-	hashtags = [] #'#GoPackGo', '#ThursdayThoughts', '#PitMad', '#foodie'
+	hashtags = ['#LilacFire', '#WeirdPlacestoSeeSanta', '#BeatTheHolidayBluesBy', '#StopTheFCC', '#EndWell17', '#GenderEquityNYC', '#DontBeSurprisedWhen', '#NOvsATL', '#AllStars2017', '#CamilaWeAreYourRealFriends', '#BallondOr', '#CFBAwards', '#DraftingDemocracy', '#atxweather', '#ISEEC17', '#H\xe1blameBajito', '#TLTechLive', '#FreeJah', '#SAClimateReady', '#AztecSchoolShooting', '#PolygonShow', '#TheFive'] #'#GoPackGo', '#ThursdayThoughts', '#PitMad', '#foodie'
 	#US woeid: 23424977
 
 	#get hashtags
@@ -67,10 +68,11 @@ def main():
 		if (hashtag["name"][0] == '#'):
 			hashtags.append(hashtag["name"])
 
+
 	make_request(authorization, hashtags, G)
 
 
-	#print hashtags
+	print hashtags
 
 
 
