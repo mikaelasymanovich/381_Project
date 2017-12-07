@@ -4,6 +4,8 @@ import json
 import networkx as nx
 import matplotlib.pyplot as plt
 
+
+
 def auth():
 	consumer_key = "1ceDRUwTN3nRchujEbjppcukV";
 	secret_key = "JneAHLQmumCCCMKDocoMCnPDEP88SdmgrjaWZ70Y8FwPbOEBQj";
@@ -53,8 +55,23 @@ def showGraph(graph):
 def main():
 	G = nx.DiGraph()
 	authorization = auth()
-	hashtags = ['#GoPackGo']
+	hashtags = [] #'#GoPackGo', '#ThursdayThoughts', '#PitMad', '#foodie'
+	#US woeid: 23424977
+
+	#get hashtags
+	payload = {'id': '23424977'}
+	header = {'authorization': authorization}
+	r = requests.get('https://api.twitter.com/1.1/trends/place.json', headers=header, params=payload)
+	hashtags_all = json.loads(r.content)[0]
+	for hashtag in hashtags_all["trends"]:
+		if (hashtag["name"][0] == '#'):
+			hashtags.append(hashtag["name"])
+
 	make_request(authorization, hashtags, G)
+
+
+	#print hashtags
+
 
 
 
