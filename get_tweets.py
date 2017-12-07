@@ -43,7 +43,7 @@ def make_graph(auth, tweets, G):
 		retweeters = json.loads(r.content)
 		for retweeter in retweeters["ids"]:
 			G.add_node(retweeter)
-			G.add_edge(user_id, retweeter)
+			G.add_edge(retweeter, user_id, weight=1) #change this weight accordingly
 	return G
 
 def showGraph(graph):
@@ -51,7 +51,7 @@ def showGraph(graph):
 	plt.show()
 
 def main():
-	G = nx.Graph()
+	G = nx.DiGraph()
 	authorization = auth()
 	hashtags = ['#GoPackGo']
 	make_request(authorization, hashtags, G)
