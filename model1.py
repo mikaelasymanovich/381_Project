@@ -1,4 +1,5 @@
 import math
+import tweepy
 
 """
 Assigns an influence score to a user. The score is an integer from 0 to 100,
@@ -22,6 +23,19 @@ reactionWeight = 1
 verifiedWeight = 1
 followersLowWeight = 3
 followersHighWeight = 2
+
+def auth():
+    consumer_key = "1ceDRUwTN3nRchujEbjppcukV";
+    secret_key = "JneAHLQmumCCCMKDocoMCnPDEP88SdmgrjaWZ70Y8FwPbOEBQj";
+    combined_keys = consumer_key + ":" + secret_key;
+    encoded_key = "Basic " + base64.b64encode(combined_keys);
+
+    post_headers = {'authorization': encoded_key, 'content-type': 'application/x-www-form-urlencoded;charset=UTF-8'};
+    post_data = {'grant_type': 'client_credentials'};
+    pr = requests.post("https://api.twitter.com/oauth2/token", headers=post_headers, data=post_data);
+    data = json.loads(pr.content)
+    get_authorization = "Bearer " + data.get("access_token");
+    return get_authorization
 
 def __score (value, weight, threshold):
     try:
@@ -51,3 +65,38 @@ def getScore(listedCount,numFollowers,following,tweetReactions,isVerified):
     
     influenceScore = verifiedWeight*isVerified + listScore + followRatioScore + reactionScore + followersLowScore + followersHighScore
     return influenceScore
+
+def userScore(theId):
+    #get listed count
+    #payload = {'q': hashtag, 'result_type': 'popular', 'count': 10}
+    #get_headers = {'authorization': auth}
+    #r = requests.get('https://api.twitter.com/1.1/search/tweets.json?', headers=get_headers, params=payload)
+    auth = tweepy.OAuthHandler("1ceDRUwTN3nRchujEbjppcukV", "JneAHLQmumCCCMKDocoMCnPDEP88SdmgrjaWZ70Y8FwPbOEBQj")
+    auth.set_access_tokewn("724834639-vS22k2Eo2uLuGZjzPXqhzO3qGWFKbAYBuvvD98VX", "KlyEDP8fnB0SiQWI2FFr0iu5jm7cVfncpJhavPekKM2Wa")
+    api = tweepy.API(auth)
+    userId = []
+    userId.append(theId)
+    user = api.lookup_users(userId)
+    listedCount = user.listed_count
+    followers = user.followers_count
+    friends = user.friends_count
+    lastTweetReactions = 0
+    verified = user.verified
+    if (user.statuses_count > 1 and not (user.protected)):
+        try:
+            lastTweetReactions = user.status.favorite_count + user.status.retweet_count
+        except:
+            lastTweetReactions = 0
+    influenceScore = getScore(listedCount,followers,friends,lastTweetReactions,verified)
+    return influenceScore
+
+
+
+
+
+
+
+
+
+
+

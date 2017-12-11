@@ -3,6 +3,7 @@ import base64
 import json
 import networkx as nx
 import matplotlib.pyplot as plt
+import model1.py
 
 
 
@@ -22,7 +23,7 @@ def auth():
 
 def make_request(auth, hashtags, graph):
 	for hashtag in hashtags:
-		payload = {'q': hashtag, 'result_type': 'popular', 'count': 100}
+		payload = {'q': hashtag, 'result_type': 'popular', 'count': 10}
 		get_headers = {'authorization': auth}
 		r = requests.get('https://api.twitter.com/1.1/search/tweets.json?', headers=get_headers, params=payload)
 		parsed = json.loads(r.content)
@@ -44,20 +45,24 @@ def make_graph(auth, tweets, G):
 		r = requests.get('https://api.twitter.com/1.1/statuses/retweeters/ids.json', headers=headers, params=payload1)
 		retweeters = json.loads(r.content)
 		#print retweeters
+
 		for retweeter in retweeters["ids"]:
 			G.add_node(retweeter)
+			weight = model1.userScore(retweeter)
+			print weight
 			G.add_edge(retweeter, user_id, weight=1) #change this weight accordingly
 	return G
 
 def showGraph(graph):
-	nx.draw(graph)
+	nx.draw(graph, node_color='#FF4500')
 	plt.show()
 
 def main():
 	G = nx.DiGraph()
 	authorization = auth()
-	hashtags = ['#LilacFire', '#WeirdPlacestoSeeSanta', '#BeatTheHolidayBluesBy', '#StopTheFCC', '#EndWell17',
-	'#GenderEquityNYC', '#DontBeSurprisedWhen', '#NOvsATL', '#AllStars2017', '#CamilaWeAreYourRealFriends'] 
+	#hashtags = ['#LilacFire', '#WeirdPlacestoSeeSanta', '#BeatTheHolidayBluesBy', '#StopTheFCC', '#EndWell17',
+	#'#GenderEquityNYC', '#DontBeSurprisedWhen', '#NOvsATL', '#AllStars2017', '#CamilaWeAreYourRealFriends'] 
+	hashtags = ['#WeirdPlacestoSeeSanta']
 	#'#BallondOr', '#CFBAwards', '#DraftingDemocracy', '#atxweather']
 	#, '#ISEEC17']
 	#, '#H\xe1blameBajito'] 
