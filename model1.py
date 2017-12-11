@@ -72,23 +72,25 @@ def userScore(theId):
     #get_headers = {'authorization': auth}
     #r = requests.get('https://api.twitter.com/1.1/search/tweets.json?', headers=get_headers, params=payload)
     auth = tweepy.OAuthHandler("1ceDRUwTN3nRchujEbjppcukV", "JneAHLQmumCCCMKDocoMCnPDEP88SdmgrjaWZ70Y8FwPbOEBQj")
-    auth.set_access_tokewn("724834639-vS22k2Eo2uLuGZjzPXqhzO3qGWFKbAYBuvvD98VX", "KlyEDP8fnB0SiQWI2FFr0iu5jm7cVfncpJhavPekKM2Wa")
+    auth.set_access_token("724834639-vS22k2Eo2uLuGZjzPXqhzO3qGWFKbAYBuvvD98VX", "KlyEDP8fnB0SiQWI2FFr0iu5jm7cVfncpJhavPekKM2Wa")
     api = tweepy.API(auth)
     userId = []
     userId.append(theId)
     user = api.lookup_users(userId)
-    listedCount = user.listed_count
-    followers = user.followers_count
-    friends = user.friends_count
-    lastTweetReactions = 0
-    verified = user.verified
-    if (user.statuses_count > 1 and not (user.protected)):
-        try:
-            lastTweetReactions = user.status.favorite_count + user.status.retweet_count
-        except:
-            lastTweetReactions = 0
-    influenceScore = getScore(listedCount,followers,friends,lastTweetReactions,verified)
-    return influenceScore
+    for u in user:
+        followers = u.followers_count
+        listedCount = u.listed_count
+
+        friends = u.friends_count
+        lastTweetReactions = 0
+        verified = u.verified
+        if (u.statuses_count > 1 and not (u.protected)):
+            try:
+                lastTweetReactions = u.status.favorite_count + u.status.retweet_count
+            except:
+                lastTweetReactions = 0
+        influenceScore = getScore(listedCount,followers,friends,lastTweetReactions,verified)
+        return influenceScore
 
 
 

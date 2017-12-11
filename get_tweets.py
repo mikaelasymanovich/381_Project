@@ -3,7 +3,7 @@ import base64
 import json
 import networkx as nx
 import matplotlib.pyplot as plt
-import model1.py
+import model1
 
 
 
