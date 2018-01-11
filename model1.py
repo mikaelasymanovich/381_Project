@@ -1,5 +1,6 @@
 import math
 import tweepy
+from itertools import cycle
 
 """
 Assigns an influence score to a user. The score is an integer from 0 to 100,
@@ -73,7 +74,7 @@ def userScore(theId):
     #r = requests.get('https://api.twitter.com/1.1/search/tweets.json?', headers=get_headers, params=payload)
     key = 0   
     CONSUMER_KEY       =     [
-            '9XkYgKXCTL6KH0JOws7pkKszG',
+            #'9XkYgKXCTL6KH0JOws7pkKszG',
             'jwOVv0V5uVdpXTtP5M6DyJv6C',
             'FnBA0hwuwZIhDR1qw0XQFrkla',
             'CZHFL5vpmTdQomW4vIkN9YFx3',
@@ -95,7 +96,7 @@ def userScore(theId):
             '30TQMX9tqDIoWhepFio2p7MEV'
             ]
     CONSUMER_SECRET    =     [
-            '7wdo3HpkOlvS9cfxoAqmRKOuyJcAyx9EEuARBRzFKnfX3yhDL5',
+            #'7wdo3HpkOlvS9cfxoAqmRKOuyJcAyx9EEuARBRzFKnfX3yhDL5',
             'mEI4IFTj31LmePCNUElz4BxV0fNch069pa5c4t8iNe8jYOsfoL',
             '0slkgdEH3istWudTcfX1BlucCqVBikHmGycjdfmCFO0fm44Rqe',
             'jScXxI48mvhjsl5wKCrIr1Ie1ay6MKMUVR77xYZdZONHZFCgrE',
@@ -117,7 +118,7 @@ def userScore(theId):
             'hqyOjHI6d0j2G1yCLpwR6FnQYGYl7Scldq8sRsxv9BcygPK6q7'
             ]   
     OAUTH_TOKEN        =     [  
-            '745277343736995844-rRDSeonuJbi56e9QkgNpTxLLIJ6zaym',
+            #'745277343736995844-rRDSeonuJbi56e9QkgNpTxLLIJ6zaym',
             '745277343736995844-RYCMDprABDve3CqY2hkCOZOTuWzOcS3',
             '745277343736995844-fsBMNygESaLKxbJbZvhE49l7CoUfUv6',
             '320947567-H5rRzPhUdRIkO7MYeuYxU3pZ0EP8MUJICHHWUM2e',
@@ -139,7 +140,7 @@ def userScore(theId):
            '1176891456-3ZNiISR9zrMwMx4bqwEss1SlSDfpAsUaNPjcAki'
             ]
     OAUTH_TOKEN_SECRET =     [      
-            'XlkXHOLAiY7bFUVImAq1qr8qzeWugd5ihbnpnmnlYVMwx',
+            #'XlkXHOLAiY7bFUVImAq1qr8qzeWugd5ihbnpnmnlYVMwx',
             'QHOVrvfpki9yj5sZF5x4w4iiQxzKPqZffMvqKGn8CUl6P',
             'AdyGaihD0UAmDIgrsMrtK8ZT0MSgaiPIIDlk8FBI4sFMX',
             'gCKK2e7eLGYUmRK7Wuczxge0NtpFLbvsRDjp6pNvKd15i',
@@ -166,19 +167,19 @@ def userScore(theId):
     auth = tweepy.OAuthHandler(CONSUMER_KEY[key], CONSUMER_SECRET[key])
     auth.set_access_token(OAUTH_TOKEN[key],OAUTH_TOKEN_SECRET[key])
     api = tweepy.API(auth)
-    limit = api.rate_limit_status()
-    limit_remaining = limit['resources']['users']['/users/lookup']['remaining']
-    print('Key: ', key, 'Requests Remaining: ', limit_remaining )
+    #limit = api.rate_limit_status()
+    #limit_remaining = limit['resources']['users']['/users/lookup']['remaining']
+    #print('Key: ', key, 'Requests Remaining: ', limit_remaining )
     # Go to first key that has calls left
-    while(limit_remaining == 0):      
-       key = next(key_cycle)
-       print("###LIMIT REACHED, SWITCHING KEYS###")
-       print('###USING KEY SET #',key)
-       auth = tweepy.OAuthHandler(CONSUMER_KEY[key], CONSUMER_SECRET[key])
-       auth.set_access_token(OAUTH_TOKEN[key],OAUTH_TOKEN_SECRET[key])
-       api = tweepy.API(auth)
-       limit = api.rate_limit_status()
-       limit_remaining = limit['resources']['users']['/users/lookup']['remaining']
+    #while(limit_remaining == 0):      
+    #   key = next(key_cycle)
+    #   print("###LIMIT REACHED, SWITCHING KEYS###")
+    #   print('###USING KEY SET #',key)
+    #   auth = tweepy.OAuthHandler(CONSUMER_KEY[key], CONSUMER_SECRET[key])
+    #   auth.set_access_token(OAUTH_TOKEN[key],OAUTH_TOKEN_SECRET[key])
+    #   api = tweepy.API(auth)
+    #   limit = api.rate_limit_status()
+    #   limit_remaining = limit['resources']['users']['/users/lookup']['remaining']
     #auth = tweepy.OAuthHandler("1ceDRUwTN3nRchujEbjppcukV", "JneAHLQmumCCCMKDocoMCnPDEP88SdmgrjaWZ70Y8FwPbOEBQj")
     #auth.set_access_token("724834639-vS22k2Eo2uLuGZjzPXqhzO3qGWFKbAYBuvvD98VX", "KlyEDP8fnB0SiQWI2FFr0iu5jm7cVfncpJhavPekKM2Wa")
     try:
@@ -200,7 +201,7 @@ def userScore(theId):
                     lastTweetReactions = 0
             influenceScore = getScore(listedCount,followers,friends,lastTweetReactions,verified)
             return influenceScore
-     except tweepy.TweepError as e:
+    except tweepy.TweepError as e:
                 print("###Rate Limit Exceeded###")
                 #check first key
                 if (key == (sets - 1)):
@@ -212,11 +213,11 @@ def userScore(theId):
                  if (limit_remaining != 180):
                     print("Sleeping for secs")
                     time.sleep(30)
-                key = next(key_cycle)      
+                #key = next(key_cycle)   
+                key = key + 1   
                 print("###LIMIT REACHED, SWITCHING KEYS###")
                 print('###USING KEY SET #',key)
                 auth = tweepy.OAuthHandler(Set[0][key],Set[1][key])
                 auth.set_access_token(Set[2][key],Set[3][key])
                 api = tweepy.API(auth)
                 limit = api.rate_limit_status()
-                continue
