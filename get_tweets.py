@@ -44,7 +44,7 @@ def make_graph(auth, tweets, G):
 		headers = {'authorization': auth}
 		r = requests.get('https://api.twitter.com/1.1/statuses/retweeters/ids.json', headers=headers, params=payload1)
 		retweeters = json.loads(r.content)
-		#print retweeters
+		print retweeters
 
 		for retweeter in retweeters["ids"]:
 			G.add_node(retweeter)

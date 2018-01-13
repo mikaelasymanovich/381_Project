@@ -72,7 +72,7 @@ def userScore(theId):
     #payload = {'q': hashtag, 'result_type': 'popular', 'count': 10}
     #get_headers = {'authorization': auth}
     #r = requests.get('https://api.twitter.com/1.1/search/tweets.json?', headers=get_headers, params=payload)
-    key = 0   
+    key = 2  
     CONSUMER_KEY       =     [
             #'9XkYgKXCTL6KH0JOws7pkKszG',
             'jwOVv0V5uVdpXTtP5M6DyJv6C',
@@ -202,6 +202,43 @@ def userScore(theId):
             influenceScore = getScore(listedCount,followers,friends,lastTweetReactions,verified)
             return influenceScore
     except tweepy.TweepError as e:
+            print("###Rate Limit Exceeded###")
+            #check first key
+            if (key == (sets - 1)):
+             print("key thing")
+             auth = tweepy.OAuthHandler(Set[0][0],Set[1][0])
+             auth.set_access_token(Set[2][0],Set[3][0])
+             api = tweepy.API(auth) 
+             limit_remaining = limit['resources']['users']['/users/lookup']['remaining']
+             if (limit_remaining != 180):
+                print("Sleeping for secs")
+                time.sleep(30)
+            #key = next(key_cycle)   
+            key = key + 1   
+            print("###LIMIT REACHED, SWITCHING KEYS###")
+            print('###USING KEY SET #',key)
+            auth = tweepy.OAuthHandler(Set[0][key],Set[1][key])
+            auth.set_access_token(Set[2][key],Set[3][key])
+            try:
+                api = tweepy.API(auth)
+                userId = []
+                userId.append(theId)
+                user = api.lookup_users(userId)
+                for u in user:
+                    followers = u.followers_count
+                    listedCount = u.listed_count
+
+                    friends = u.friends_count
+                    lastTweetReactions = 0
+                    verified = u.verified
+                    if (u.statuses_count > 1 and not (u.protected)):
+                        try:
+                            lastTweetReactions = u.status.favorite_count + u.status.retweet_count
+                        except:
+                            lastTweetReactions = 0
+                    influenceScore = getScore(listedCount,followers,friends,lastTweetReactions,verified)
+                    return influenceScore
+            except tweepy.TweepError as e:
                 print("###Rate Limit Exceeded###")
                 #check first key
                 if (key == (sets - 1)):
@@ -219,5 +256,25 @@ def userScore(theId):
                 print('###USING KEY SET #',key)
                 auth = tweepy.OAuthHandler(Set[0][key],Set[1][key])
                 auth.set_access_token(Set[2][key],Set[3][key])
+
                 api = tweepy.API(auth)
-                limit = api.rate_limit_status()
+                userId = []
+                userId.append(theId)
+                user = api.lookup_users(userId)
+                for u in user:
+                    followers = u.followers_count
+                    listedCount = u.listed_count
+
+                    friends = u.friends_count
+                    lastTweetReactions = 0
+                    verified = u.verified
+                    if (u.statuses_count > 1 and not (u.protected)):
+                        try:
+                            lastTweetReactions = u.status.favorite_count + u.status.retweet_count
+                        except:
+                            lastTweetReactions = 0
+                    influenceScore = getScore(listedCount,followers,friends,lastTweetReactions,verified)
+                    return influenceScore
+
+
+                #limit = api.rate_limit_status()
