@@ -21,68 +21,31 @@ def auth():
 	return get_authorization
 
 
-def make_request(auth, hashtags, graph):
-	for hashtag in hashtags:
-		payload = {'q': hashtag, 'result_type': 'popular', 'count': 10}
-		get_headers = {'authorization': auth}
-		r = requests.get('https://api.twitter.com/1.1/search/tweets.json?', headers=get_headers, params=payload)
-		parsed = json.loads(r.content)
-		graph = make_graph(auth, parsed, graph)
-	showGraph(graph)
-	return graph
+def make_request(auth, user, graph):
+	payload = {'user_id': user, 'count': 500}
+	get_headers = {'authorization': auth}
+	r = requests.get('https://api.twitter.com/1.1/followers/ids.json?', headers=get_headers, params=payload)
+	parsed = json.loads(r.content).get('ids')
+	weights_dict = get_weights(auth, parsed, graph)
+	#showGraph(graph)
+	#return graph
+	for key, value in sorted(weights_dict.iteritems(), key=lambda (k,v): (v,k)):
+   		print "%s: %s" % (key, value)
 
 
-def make_graph(auth, tweets, G):
+def get_weights(auth, followers, G):
 	user_tweet = {}
 	users = []
 	user_weights = {}
-	max_weight = 0
 
-	for tweet in tweets["statuses"]:
-		user_id = tweet["user"]["id"]
-		tweet_id = tweet["id_str"]
-		user_tweet[user_id] = tweet_id
-		users.append(user_id)
-		weight_user = model1.userScore(user_id)
+	for follower in followers:
+		#users.append(user_id)
+		weight = model1.userScore(follower)
+		user_weights[follower] = weight
 
-		if (user_id in user_weights):
-			user_weights[user_id] = user_weights[user_id] + weight_user
-			if (user_weights[user_id] > max_weight):
-					max_weight = user_id
-		else:
-			user_weights[user_id] = weight_user
-			if (user_weights[user_id] > max_weight):
-					max_weight = user_id
-
-		G.add_node(user_id, node_size=weight_user+ 0.1)
-		payload1 = {'id': tweet_id}
-		headers = {'authorization': auth}
-		r = requests.get('https://api.twitter.com/1.1/statuses/retweeters/ids.json', headers=headers, params=payload1)
-		retweeters = json.loads(r.content)
-		print retweeters
-
-		for retweeter in retweeters["ids"]:
-			weight = model1.userScore(retweeter)
-			#ADD 0.1 SO THE NODES OF SIZE 0.0 SHOW UP
-			G.add_node(retweeter, node_size=weight+ 0.1)
-			#print weight
-			G.add_edge(retweeter, user_id, weight=weight) #change this weight accordingly
-
-			if (retweeter in user_weights):
-				print("yippee")
-				user_weights[retweeter] = user_weights[retweeter] + weight
-				if (user_weights[retweeter] > max_weight):
-					max_weight = retweeter
-			else:
-				user_weights[retweeter] = weight
-				if (user_weights[retweeter] > max_weight):
-					max_weight = retweeter
-
-	for key, value in sorted(user_weights.iteritems(), key=lambda (k,v): (v,k)):
-   		print "%s: %s" % (key, value)
-	print("max: ")
-	print(max_weight)
-	return G
+	return user_weights
+		#G.add_node(follower, node_size=weight_user)
+		#return G
 
 def showGraph(graph):
 	weights=nx.get_edge_attributes(graph,'weight')
@@ -99,7 +62,7 @@ def main():
 	authorization = auth()
 	#hashtags = ['#LilacFire', '#WeirdPlacestoSeeSanta', '#BeatTheHolidayBluesBy', '#StopTheFCC', '#EndWell17',
 	#'#GenderEquityNYC', '#DontBeSurprisedWhen', '#NOvsATL', '#AllStars2017', '#CamilaWeAreYourRealFriends'] 
-	hashtags = ['#FlyEaglesFly']
+	user_id = ['25073877']
 	#'#BallondOr', '#CFBAwards', '#DraftingDemocracy', '#atxweather']
 	#, '#ISEEC17']
 	#, '#H\xe1blameBajito'] 
@@ -116,7 +79,7 @@ def main():
 	#		hashtags.append(hashtag["name"])
 
 
-	gr = make_request(authorization, hashtags, G)
+	gr = make_request(authorization, user_id, G)
 
 
 
