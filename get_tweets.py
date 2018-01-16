@@ -25,7 +25,7 @@ def auth():
 
 def make_request(auth, hashtags, graph):
 	for hashtag in hashtags:
-		payload = {'q': hashtag, 'result_type': 'popular', 'count': 10}
+		payload = {'q': hashtag, 'result_type': 'popular'}
 		#payload = {'q': hashtag}
 		get_headers = {'authorization': auth}
 		r = requests.get('https://api.twitter.com/1.1/search/tweets.json?', headers=get_headers, params=payload)
@@ -174,7 +174,7 @@ def page_rank(N, matrix):
 		pi = np.dot(np.transpose(pi), G)
 
 	
-	print pi
+	print ("pi: ", pi)
 
 
 def main():
