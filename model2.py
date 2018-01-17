@@ -18,9 +18,9 @@ followersLowThreshold = 2000
 followersHighThreshold = 1000*200
 
 #must sum to 10
-listWeight = 1
-followRatioWeight = 2
-reactionWeight = 1
+listWeight = 0
+followRatioWeight = 0
+reactionWeight = 2
 verifiedWeight = 1
 followersLowWeight = 3
 followersHighWeight = 2
@@ -196,7 +196,7 @@ def userScore(theId):
             verified = u.verified
             if (u.statuses_count > 1 and not (u.protected)):
                 try:
-                    lastTweetReactions = u.status.favorite_count + u.status.retweet_count
+                    lastTweetReactions = (0.4)u.status.favorite_count + (1.6)u.status.retweet_count
                 except:
                     lastTweetReactions = 0
             influenceScore = getScore(listedCount,followers,friends,lastTweetReactions,verified)
@@ -233,7 +233,7 @@ def userScore(theId):
                     verified = u.verified
                     if (u.statuses_count > 1 and not (u.protected)):
                         try:
-                            lastTweetReactions = u.status.favorite_count + u.status.retweet_count
+                            lastTweetReactions = (0.4)u.status.favorite_count + (1.6)u.status.retweet_count
                         except:
                             lastTweetReactions = 0
                     influenceScore = getScore(listedCount,followers,friends,lastTweetReactions,verified)
@@ -270,7 +270,7 @@ def userScore(theId):
                     verified = u.verified
                     if (u.statuses_count > 1 and not (u.protected)):
                         try:
-                            lastTweetReactions = (0.7)*u.status.favorite_count + (1.225)*u.status.retweet_count
+                            lastTweetReactions = (0.4)*u.status.favorite_count + (1.6)*u.status.retweet_count
                         except:
                             lastTweetReactions = 0
                     influenceScore = getScore(listedCount,followers,friends,lastTweetReactions,verified)
